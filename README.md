@@ -1,2 +1,3 @@
-# aggregator
-message aggregator lib
+# Message aggregator
+message aggregator
+

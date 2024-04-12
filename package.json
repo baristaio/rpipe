@@ -2,8 +2,9 @@
   "name": "@baristaio/aggregator",
   "version": "1.0.0",
   "description": "The group message aggregation with messages state management",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/baristaio/aggregator/issues"
   },
-  "homepage": "https://github.com/baristaio/aggregator#readme"
+  "homepage": "https://github.com/baristaio/aggregator#readme",
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "redis": "^4.6.13"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.4",
+    "tslint": "^6.1.3",
+    "typescript": "^5.4.3"
+  }
 }
