@@ -20,7 +20,7 @@ export const schemaMessage: JSONSchemaType<Message> = {
                 type: {type: "string"},
                 payload: {type: "object"}
             },
-            required: ["type", "payload"]
+            required: ["type"]
         }
     },
     required: ["receiver", "action"]

@@ -3,14 +3,13 @@ import { connect } from "./redisClient";
 import { RedisClientType } from 'redis';
 import { describe, expect, it, beforeAll } from '@jest/globals';
 import { Aggregator } from './aggregator';
+import {Message} from "./types";
 
 
 const options = {
     host: 'localhost',
     port: 6379
 };
-
-
 
 describe('Aggregator', () => {
     let redisClient: RedisClientType;
@@ -22,6 +21,25 @@ describe('Aggregator', () => {
             states: ['processing', 'done', 'failed'],
             postFix: 'testAggregator'
         });
+    });
+
+    it('should return the correct collector name', () => {
+        expect(aggregator.getCollectoreName()).toBe('collector');
+    });
+
+    it('should register messages correctly', async () => {
+        const messages:  Message[] = [
+          {receiver: {id: '123', name: 'test' }, action: {type: 'testAction'}}
+        ];
+        await aggregator.registerMessages(messages);
+        // Verify the message was added to the correct set
+        const members = await redisClient.sMembers('aggregator:group:testAggregator:id:123:state:collector:testAggregator');
+        expect(members).toContain(JSON.stringify({type:"testAction"}));
+    });
+
+    it('should throw an error for invalid messages', async () => {
+        const invalidMessages = [{ receiver: { id: '123' }, action: { type: '' } }]; // Assuming this is invalid
+        await expect(aggregator.registerMessages(invalidMessages as Message[])).rejects.toThrow('Invalid message');
     });
 
     it('should correctly generate a Redis key', () => {
@@ -82,6 +100,52 @@ describe('Aggregator', () => {
 
     it('should throw an error when clearing data with an invalid state', async () => {
         await expect(aggregator.clear('123', 'invalidState')).rejects.toThrow('Invalid state name');
+    });
+
+
+    it('should move data from one Redis key to another', async () => {
+        // Setup initial state
+        await redisClient.sAdd('fromKey', 'value1');
+        await aggregator.move('fromKey', 'toKey');
+        // Verify data was moved
+        const members = await redisClient.sMembers('toKey');
+        expect(members).toContain('value1');
+    });
+
+    it('should move data from one state to another for a given identifier', async () => {
+        // Setup initial state
+        await aggregator.add('123', 'processing', 'value2');
+        await aggregator.moveId('123', 'processing', 'done');
+        // Verify data was moved
+        const members = await aggregator.getMembers('123', 'done');
+        expect(members).toContain('value2');
+    });
+
+    it('should move data to its next state based on the current state', async () => {
+        // Setup initial state
+        await aggregator.add('123', 'processing', 'value3');
+        await aggregator.next('123', 'processing');
+        // Verify data was moved to the next state
+        const members = await aggregator.getMembers('123', 'done');
+        expect(members).toContain('value3');
+    });
+
+    it('should retrieve all data in the "collected" state', async () => {
+        // Setup initial state
+        await aggregator.add('123', 'collector', 'value4');
+        const collected = await aggregator.getCollected('123');
+        // Verify data was retrieved
+        expect(collected).toContain('value4');
+    });
+
+    it('should combine data from multiple states into a single state', async () => {
+        // Setup initial state
+        await aggregator.add('123', 'processing', 'value5');
+        await aggregator.add('123', 'done', 'value6');
+        await aggregator.merge('123', 'collector', ['processing', 'done']);
+        // Verify data was combined
+        const members = await aggregator.getMembers('123', 'collector');
+        expect(members).toEqual(expect.arrayContaining(['value5', 'value6']));
     });
 });
 

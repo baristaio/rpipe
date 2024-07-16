@@ -12,7 +12,7 @@ export type AggregatorOptions = {
 
 export type Action = {
     type: string;
-    payload: object;
+    payload?: object;
 };
 export type Receiver = {
     name: string;
