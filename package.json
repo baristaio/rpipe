@@ -1,6 +1,6 @@
 {
   "name": "@baristaio/aggregator",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "The group message aggregation with messages state management",
   "main": "index.ts",
   "scripts": {
