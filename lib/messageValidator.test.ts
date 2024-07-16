@@ -60,7 +60,7 @@ describe('Message Validation', () => {
                 id: '1234'
             },
             action: {
-                type: 'greeting'
+                payload: 'greeting'
             }
         };
         const valid = validateMessage(message);
