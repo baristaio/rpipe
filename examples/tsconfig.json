@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "../dist/",
+//    "rootDir": "examples",
+    "types": ["node"],
+    "declaration": true,
+    "allowJs": true,
+    "useDefineForClassFields": true,
+    "esModuleInterop": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+  },
+  "allowUnionTypes": true,
+  "include": ["**/*.ts", "../lib/**/*.ts", "**/*.js"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}
+

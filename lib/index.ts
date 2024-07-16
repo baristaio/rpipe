@@ -3,5 +3,6 @@ import collector = require('./collector');
 
 export = {
   aggregator,
-  collector
+  collector,
+  Aggregator: aggregator.Aggregator
 }
