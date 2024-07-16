@@ -1,14 +1,44 @@
 {
+  "parser": "typescript-eslint-parser",
+  "plugins": [
+    "eslint-plugin-typescript"
+  ],
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "strict": true,
+    "sourceMap": true,
+//    "strict": true,
     "esModuleInterop": true,
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": ".",
     "types": ["node"],
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": ["ES2020"],
+    "declaration": true,
+    "noImplicitAny": true,
+
+    "moduleResolution": "node",
+    "pretty": true,
+    "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": true,           /* Enables experimental support for emitting type metadata for decorators. */
+    "useUnknownInCatchVariables": false,
+    "esModuleInterop": true
   },
-  "include": ["lib/**/*.ts", "index.ts", "example.ts/**/*ts"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "allowUnionTypes": true,
+  "include": ["lib/**/*.ts", "","index.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "./dist/**/*",
+    "**/*.test.ts"
+  ],
+
+//  "extends": "eslint:recommended",
+  "rules": {
+    "consistent-return": 2,
+    "indent"           : [1, 4],
+    "no-else-return"   : 1,
+    "semi"             : [1, "always"],
+    "space-unary-ops"  : 2
+  }
 }

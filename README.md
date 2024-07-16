@@ -1,3 +1,0 @@
-# Message aggregator
-message aggregator
-

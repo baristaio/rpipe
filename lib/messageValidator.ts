@@ -1,8 +1,9 @@
 import {Message} from './types';
 import Ajv, {JSONSchemaType} from "ajv"
-const ajv = new Ajv();
+const ajv = new Ajv({allowUnionTypes: true});
 
-const schemaMessage: JSONSchemaType<Message> = {
+// @ts-ignore
+export const schemaMessage: JSONSchemaType<Message> = {
     type: "object",
     properties: {
         receiver: {
