@@ -1,6 +1,6 @@
 {
   "name": "@baristaio/rpipe",
-  "version": "0.0.2-alfa",
+  "version": "0.0.3-alfa",
   "description": "The Redis-based pipeline for messages/data with status and state.",
   "main": "index.ts",
   "scripts": {
