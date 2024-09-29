@@ -1,7 +1,7 @@
-import aggregator = require('./lib/aggregator');
+import rpipe = require('./lib/rpipe');
 import collector = require('./lib/collector');
 
 export = {
-  aggregator,
+  rpipe,
   collector
 }

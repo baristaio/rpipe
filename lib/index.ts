@@ -1,8 +1,8 @@
-import aggregator = require('./aggregator');
+import rpipe = require('./rpipe');
 import collector = require('./collector');
 
 export = {
-  aggregator,
+  rpipe: rpipe.RPipe,
   collector,
-  Aggregator: aggregator.Aggregator
+  RPipe: rpipe.RPipe
 }
