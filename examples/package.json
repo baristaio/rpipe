@@ -10,11 +10,11 @@
   "author": "vadim-ri",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/baristaio/aggregator/issues"
+    "url": "https://github.com/baristaio/rpipe/issues"
   },
-  "homepage": "https://github.com/baristaio/aggregator#readme",
+  "homepage": "https://github.com/baristaio/rpipe#readme",
   "dependencies": {
-    "@baristaio/aggregator": "../"
+    "@baristaio/rpipe": "../"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

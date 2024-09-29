@@ -1,4 +1,4 @@
-import { AggregatorOptions, Message } from "./types";
+import { PipeOptions, Message } from "./types";
 import { RedisClientType } from "redis";
 import { validateMessage } from "./messageValidator";
 
@@ -7,6 +7,8 @@ const defaultStates = ['processing', 'done', 'failed'];
 const DEFAULT_PARTS_NO = 8;
 const ID_POSITION = 4;
 const STATE_POSITION = 6;
+const DEFAULT_SEPARATOR = ':';
+const DEFAULT_PREFIX = 'pipe';
 
 /**
  * The `RPipe` class provides functionality for managing and manipulating data within a Redis database.
@@ -22,17 +24,18 @@ export class RPipe {
   private _separator: string; // Separator used in Redis keys
   private _partsNo: number; // Expected number of parts in a parsed Redis key
 
+
   /**
    * Constructs an instance of the `RPipe` class.
    * @param {string} name - The name of the aggregation group.
    * @param {RedisClientType} redisClient - The Redis client instance.
-   * @param {AggregatorOptions} options - Configuration options for the aggregator.
+   * @param {PipeOptions} options - Configuration options for the aggregator.
    */
-  constructor(name: string, redisClient: RedisClientType, options: AggregatorOptions) {
+  constructor(name: string, redisClient: RedisClientType, options: PipeOptions) {
     this._client = redisClient;
     this._name = name;
     this._postFix = name || options.postFix;
-    this._prefix = 'pipe' || options.prefix;
+    this._prefix =  options.prefix || DEFAULT_PREFIX;
     this._collectorName = options?.collectorName || defaultCollectorName;
     this._states = [defaultCollectorName, ...(options?.states ?? defaultStates)];
     this._separator = ':';

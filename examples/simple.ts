@@ -1,12 +1,12 @@
 import {connect } from '../lib/redisClient';
 const config = require('./config');
-import {type Action, Message, Receiver} from '@baristaio/aggregator/lib/types';
-import { Aggregator }  from '../lib/aggregator';
+import {type Action, Message, Receiver} from '@baristaio/rpipe/lib/types';
+import { RPipe }  from '../lib/rpipe';
 const modules: string[] = ['test1', 'test2', 'test3'];
 
 const createAggregator = (name:string, client: any) => {
-    return new Aggregator(name, client, {
-        prefix: 'aggregator',
+    return new RPipe(name, client, {
+        prefix: 'pipe',
         postFix: name
     });
 };

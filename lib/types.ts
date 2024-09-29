@@ -3,7 +3,7 @@ export type Group = {
     id?: string | number;
 };
 
-export type AggregatorOptions = {
+export type PipeOptions = {
     prefix?: string;
     postFix?: string;
     states?: string[];
