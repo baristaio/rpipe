@@ -1,7 +1,7 @@
 // Removed the incorrect import
 import { connect } from "./redisClient";
 import { RedisClientType } from 'redis';
-import { describe, expect, it, beforeAll } from '@jest/globals';
+import { describe, expect, it, beforeAll, jest } from '@jest/globals';
 import {Message} from "./types";
 import { RPipe } from './rpipe';
 
@@ -169,6 +169,31 @@ describe('R-Pipe', () => {
         // Verify data was combined
         const members = await rPipe.getMembers('123', 'collector');
         expect(members).toEqual(expect.arrayContaining(['value5', 'value6']));
+    });
+
+
+    // Test for line 166 (move method)
+    it('should handle errors in move method', async () => {
+        jest.spyOn(redisClient, 'multi').mockImplementation(() => {
+            throw new Error('Mocked error');
+        });
+        await expect(rPipe.move('fromKey', 'toKey')).rejects.toThrow('Error moving data: Error: Mocked error');
+    });
+
+    // Test for line 193 (next method)
+    it('should return null when there is no next state', async () => {
+        const result = await rPipe.next('123', 'failed');
+        expect(result).toBeNull();
+    });
+
+    // Test for line 252 (merge method)
+    it('should throw an error for invalid destination state in merge', async () => {
+        await expect(rPipe.merge('123', 'invalidState', ['processing', 'done'])).rejects.toThrow('Invalid state name - invalidState');
+    });
+
+    // Test for line 256 (merge method)
+    it('should throw an error for invalid source state in merge', async () => {
+        await expect(rPipe.merge('123', 'processing', ['invalidState'])).rejects.toThrow('Invalid state name - invalidState');
     });
 });
 

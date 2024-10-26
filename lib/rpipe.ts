@@ -45,7 +45,7 @@ export class RPipe {
     this._collectorName = options?.collectorName || defaultCollectorName;
     this._states = [defaultCollectorName, ...(options?.states ?? defaultStates)];
     this._separator = SEPARATOR;
-    const { prefix: prefix, postfix } = options;
+    const {prefix, postfix} = options;
     this._partsNo = DEFAULT_PARTS_NO;
     this.statePos = DEFAULT_STATE_POSITION;
     if (prefix) {
@@ -57,17 +57,22 @@ export class RPipe {
       this._partsNo++;
     }
 
-    this._keyFormula = this.formulaGenerator(name, prefix, postfix) as (key: string, state: string) => string;
+    this._keyFormula = this.formulaGenerator(name, prefix, postfix);
   }
 
+  /**
+   * Generates a function to create Redis keys based on the provided name, prefix, and postfix.
+   *
+   * @param {string} name - The base name to be included in the Redis key.
+   * @param {string | undefined} prefix - An optional prefix to be included in the Redis key.
+   * @param {string | undefined} postfix - An optional postfix to be included in the Redis key.
+   * @returns {(key: string, state: string) => string} A function that generates Redis keys.
+   */
   private formulaGenerator(name: string, prefix: string | undefined, postfix: string | undefined): (key: string, state: string) => string {
     const prefixTemplate =  prefix ? `${prefix}${this._separator}` : '';
     const postfixTemplate = postfix ? `${this._separator}${postfix}` : '';
-    return (id: string, state: string):string => {
-      return `${prefixTemplate}${name}${this._separator}${id}${this._separator}state${this._separator}${state}${postfixTemplate}`;
-    };
+    return (id: string, state: string): string =>`${prefixTemplate}${name}${this._separator}${id}${this._separator}state${this._separator}${state}${postfixTemplate}`;
   }
-
 
   /**
    * Parses a Redis key into its components.
@@ -80,7 +85,6 @@ export class RPipe {
     if (parts.length !== this._partsNo) {
       throw new Error('Invalid key format');
     }
-
     return {
       id: parts[this.idPos],
       state: parts[this.statePos]
@@ -161,7 +165,6 @@ export class RPipe {
     } catch (error) {
       throw new Error(`Error moving data: ${error}`);
     }
-    console.log('Data moved successfully');
   }
 
   /**
