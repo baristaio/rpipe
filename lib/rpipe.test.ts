@@ -14,12 +14,19 @@ const options = {
 describe('R-Pipe', () => {
     let redisClient: RedisClientType;
     let rPipe: RPipe;
+    let messagesPipe: RPipe;
 
     beforeAll(async () => {
         redisClient = await connect(options);
         rPipe = new RPipe('testAggregator', redisClient, {
             states: ['processing', 'done', 'failed'],
             postfix: 'testAggregator'
+        });
+
+        messagesPipe = new RPipe('event', redisClient, {
+            states: ['processing', 'done', 'failed'],
+            prefix: 'messages',
+            postfix: 'aggregator'
         });
     });
 
@@ -35,6 +42,22 @@ describe('R-Pipe', () => {
         // Verify the message was added to the correct set
         const members = await redisClient.sMembers('testAggregator:123:state:collector:testAggregator');
         expect(members).toContain(JSON.stringify({type:"testAction"}));
+    });
+
+    it('should register messages correctly', async () => {
+        const messages:  Message[] = [
+            {receiver: {id: '1', name: 'message-1' }, action: {type: 'aggregator'}},
+            {receiver: {id: '1', name: 'message-2' }, action: {type: 'aggregator'}},
+            {receiver: {id: '1', name: 'message-3' }, action: {type: 'aggregator'}}
+        ];
+        await messagesPipe.registerMessages(messages);
+
+        const key = messagesPipe.getKey('1', 'collector');
+        expect(key).toBe('messages:event:1:state:collector:aggregator');
+        const parsedKey = messagesPipe.parseKey(key);
+        expect(parsedKey).toEqual({ id: '1', state: 'collector' });
+
+        // Verify the message was added to the correct set
     });
 
     it('should throw an error for invalid messages', async () => {

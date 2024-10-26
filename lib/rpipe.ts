@@ -49,7 +49,7 @@ export class RPipe {
     this._partsNo = DEFAULT_PARTS_NO;
     this.statePos = DEFAULT_STATE_POSITION;
     if (prefix) {
-       this._partsNo+= 2;
+       this._partsNo++;
        this.statePos++;
        this.idPos++;
     }
