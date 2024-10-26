@@ -19,7 +19,7 @@ describe('R-Pipe', () => {
         redisClient = await connect(options);
         rPipe = new RPipe('testAggregator', redisClient, {
             states: ['processing', 'done', 'failed'],
-            postFix: 'testAggregator'
+            postfix: 'testAggregator'
         });
     });
 
@@ -33,7 +33,7 @@ describe('R-Pipe', () => {
         ];
         await rPipe.registerMessages(messages);
         // Verify the message was added to the correct set
-        const members = await redisClient.sMembers('pipe:group:testAggregator:id:123:state:collector:testAggregator');
+        const members = await redisClient.sMembers('testAggregator:123:state:collector:testAggregator');
         expect(members).toContain(JSON.stringify({type:"testAction"}));
     });
 
@@ -44,7 +44,7 @@ describe('R-Pipe', () => {
 
     it('should correctly generate a Redis key', () => {
         const key = rPipe.getKey('123', 'processing');
-        expect(key).toBe('pipe:group:testAggregator:id:123:state:processing:testAggregator');
+        expect(key).toBe('testAggregator:123:state:processing:testAggregator');
     });
 
     it('should throw an error when generating a key with an invalid state', () => {
@@ -52,7 +52,7 @@ describe('R-Pipe', () => {
     });
 
     it('should parse a Redis key into its constituent parts', () => {
-        const parsedKey = rPipe.parseKey('pipe:group:testAggregator:id:123:state:processing:testAggregator');
+        const parsedKey = rPipe.parseKey('testAggregator:123:state:processing:testAggregator');
         expect(parsedKey).toEqual({ id: '123', state: 'processing' });
     });
 

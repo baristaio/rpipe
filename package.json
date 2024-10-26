@@ -1,13 +1,13 @@
 {
   "name": "@baristaio/rpipe",
-  "version": "0.0.2-alfa",
+  "version": "0.0.2-beta",
   "description": "The Redis-based pipeline for messages/data with status and state.",
   "main": "index.ts",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "jest --coverage",
     "build": "tsc -p tsconfig.json",
-    "postinstall": "npm run build && npm test"
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",

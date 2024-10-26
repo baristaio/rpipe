@@ -4,26 +4,25 @@ import { validateMessage } from "./messageValidator";
 
 const defaultCollectorName = 'collector';
 const defaultStates = ['processing', 'done', 'failed'];
-const DEFAULT_PARTS_NO = 8;
-const ID_POSITION = 4;
-const STATE_POSITION = 6;
-const DEFAULT_SEPARATOR = ':';
-const DEFAULT_PREFIX = 'pipe';
+const DEFAULT_PARTS_NO = 4;
+const DEFAULT_STATE_POSITION = 3;
+const DEFAULT_ID_POSITION = 1
+const SEPARATOR = ':';
+
 
 /**
  * The `RPipe` class provides functionality for managing and manipulating data within a Redis database.
  * It supports operations such as collecting, moving, and merging data based on state transitions.
  */
 export class RPipe {
-  private _name: string; // The aggregation group name
   private _client: RedisClientType; // Redis client instance
-  private _prefix: string; // Prefix for Redis keys
-  private _postFix: string | null | undefined = null; // Optional postfix for Redis keys
   private _states: string[]; // List of states for data aggregation
   private _collectorName: string; // Name of the collector
-  private _separator: string; // Separator used in Redis keys
+  private _separator: string = SEPARATOR; // Separator used in Redis keys
   private _partsNo: number; // Expected number of parts in a parsed Redis key
-
+  private _keyFormula: (key: string, state: string) => string; // Function for generating Redis keys
+  private statePos: number; // Position of the state in the Redis key
+  private  idPos = DEFAULT_ID_POSITION; // Position of the id in the Redis key
 
   /**
    * Constructs an instance of the `RPipe` class.
@@ -33,24 +32,42 @@ export class RPipe {
    */
   constructor(name: string, redisClient: RedisClientType, options: PipeOptions) {
     this._client = redisClient;
-    this._name = name;
-    this._postFix = name || options.postFix;
-    this._prefix =  options.prefix || DEFAULT_PREFIX;
+    this._partsNo = DEFAULT_PARTS_NO;
     this._collectorName = options?.collectorName || defaultCollectorName;
     this._states = [defaultCollectorName, ...(options?.states ?? defaultStates)];
-    this._separator = ':';
+    this._separator = SEPARATOR;
     this._partsNo = DEFAULT_PARTS_NO;
+    this.statePos = DEFAULT_STATE_POSITION;
+    this.init(name, options);
   }
 
-  /**
-   * Generates a Redis key based on the provided key and state.
-   * @param {string} key - The key to be included in the Redis key.
-   * @param {string} state - The state to be included in the Redis key.
-   * @returns {string} The generated Redis key.
-   */
-  private keyFormula(key: string, state: string): string {
-    return `${this._prefix}${this._separator}group${this._separator}${this._name}${this._separator}id${this._separator}${key}${this._separator}state${this._separator}${state}${this._separator}${this._postFix}`;
+  private init(name: string, options: PipeOptions): void {
+    this._collectorName = options?.collectorName || defaultCollectorName;
+    this._states = [defaultCollectorName, ...(options?.states ?? defaultStates)];
+    this._separator = SEPARATOR;
+    const { prefix: prefix, postfix } = options;
+    this._partsNo = DEFAULT_PARTS_NO;
+    this.statePos = DEFAULT_STATE_POSITION;
+    if (prefix) {
+       this._partsNo+= 2;
+       this.statePos++;
+       this.idPos++;
+    }
+    if (postfix) {
+      this._partsNo++;
+    }
+
+    this._keyFormula = this.formulaGenerator(name, prefix, postfix) as (key: string, state: string) => string;
   }
+
+  private formulaGenerator(name: string, prefix: string | undefined, postfix: string | undefined): (key: string, state: string) => string {
+    const prefixTemplate =  prefix ? `${prefix}${this._separator}` : '';
+    const postfixTemplate = postfix ? `${this._separator}${postfix}` : '';
+    return (id: string, state: string):string => {
+      return `${prefixTemplate}${name}${this._separator}${id}${this._separator}state${this._separator}${state}${postfixTemplate}`;
+    };
+  }
+
 
   /**
    * Parses a Redis key into its components.
@@ -65,8 +82,8 @@ export class RPipe {
     }
 
     return {
-      id: parts[ID_POSITION],
-      state: parts[STATE_POSITION]
+      id: parts[this.idPos],
+      state: parts[this.statePos]
     };
   }
 
@@ -98,7 +115,7 @@ export class RPipe {
     if (!this._states.includes(state)) {
       throw new Error(`Invalid state name - ${state}`);
     }
-    return this.keyFormula(id, state);
+    return this._keyFormula(id, state);
   }
 
   /**
