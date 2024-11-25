@@ -1,9 +1,9 @@
 // Removed the incorrect import
-import { connect } from "./redisClient";
+import { connect } from "../lib/redisClient";
 import { RedisClientType } from 'redis';
 import { describe, expect, it, beforeAll, jest } from '@jest/globals';
-import {Message} from "./types";
-import { RPipe } from './rpipe';
+import {Message} from "../lib/types";
+import { RPipe } from '../lib/rpipe';
 
 
 const options = {
