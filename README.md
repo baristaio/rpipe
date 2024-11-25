@@ -1,4 +1,3 @@
-```markdown
 # RPipe
 
 RPipe is a TypeScript library designed to manage and manipulate data within a Redis database. It supports operations such as collecting, moving, and merging data based on state transitions.
@@ -46,7 +45,7 @@ import redisClient from '@baristaio/rpipe/redisClient';
 const redisClient: RedisClientType = await redisClient.connect(config.redis); /* initialize your Redis client */;
 const pipe = new RPipe('exampleGroup', redisClient, {
   prefix: 'pipe',
-  postFix: 'example',
+  postfix: 'example',
   collectorName: 'collector',
   states: ['processing', 'done', 'failed']
 });
