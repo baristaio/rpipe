@@ -2,6 +2,7 @@ import {connect } from '../lib/redisClient';
 const config = require('./config');
 import {type Action, Message, Receiver} from '../lib/types';
 import { RPipe }  from '../lib/rpipe';
+import {RedisClientType} from "redis";
 const modules: string[] = ['test1', 'test2', 'test3'];
 
 const createAggregator = (name:string, client: any) => {
@@ -24,7 +25,7 @@ const messageGenerator = (name: string, id: number,  action: Action):Message => 
 };
 
 async function main() {
-    const client: any = await connect(config.redis);
+    const client: RedisClientType = await connect(config.redis);
     const pipe = createAggregator('test', client);
     const message: Message = messageGenerator('test', 2, {type: 'test', payload: {data: 'test'}});
     await pipe.registerMessages([message]);

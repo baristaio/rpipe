@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/baristaio/rpipe#readme",
   "dependencies": {
-    "@baristaio/rpipe": "../"
+    "@baristaio/rpipe": "0.0.1-beta.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
