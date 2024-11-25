@@ -4,8 +4,8 @@
   "description": "The Redis-based pipeline for messages/data with status and state.",
   "main": "index.ts",
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "test": "jest --coverage",
+    "lint": "tslint -c tslint.json 'lib/**/*.ts'",
+    "test": "jest --coverage --testPathPattern=lib/",
     "build": "tsc -p tsconfig.json",
     "integration": "jest --coverage --testPathPattern=tests/integration.test.ts",
     "postinstall": "npm run build"
