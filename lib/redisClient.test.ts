@@ -1,5 +1,6 @@
+
 import { connect } from './redisClient';
-import {RedisClientOptions, createClient } from 'redis';
+import { RedisClientOptions, createClient } from 'redis';
 import { RedisClientType } from 'redis';
 import { mock } from 'jest-mock-extended';
 

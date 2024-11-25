@@ -1,6 +1,6 @@
 import {connect } from '../lib/redisClient';
 const config = require('./config');
-import {type Action, Message, Receiver} from '@baristaio/rpipe/lib/types';
+import {type Action, Message, Receiver} from '../lib/types';
 import { RPipe }  from '../lib/rpipe';
 import {RedisClientType} from "redis";
 const modules: string[] = ['test1', 'test2', 'test3'];
@@ -8,9 +8,10 @@ const modules: string[] = ['test1', 'test2', 'test3'];
 const createAggregator = (name:string, client: any) => {
     return new RPipe(name, client, {
         prefix: 'pipe',
-        postFix: name
+        postfix: name
     });
 };
+
 
 const messageGenerator = (name: string, id: number,  action: Action):Message => {
     const receiver: Receiver = {
@@ -22,20 +23,6 @@ const messageGenerator = (name: string, id: number,  action: Action):Message => 
        action
    };
 };
-
-// connect(config.redis).then((client:any) =>  {
-//     console.log('client connected');
-//     const aggregator = createAggregator('test', client);
-//     console.log('aggregator created');
-//     const message: Message = messageGenerator('test', 2, {type: 'test', payload: {data: 'test'}});
-//     aggregator.registerMessages([message]);
-//     console.log('messages registered');
-//     await aggregator.move('collector', 'processing');
-//     await aggregator.move('processing', 'done');
-//     await aggregator.move('done', 'failed');
-//     console.log('message moved');
-// });
-
 
 async function main() {
     const client: RedisClientType = await connect(config.redis);

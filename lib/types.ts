@@ -5,7 +5,7 @@ export type Group = {
 
 export type PipeOptions = {
     prefix?: string;
-    postFix?: string;
+    postfix?: string;
     states?: string[];
     collectorName?: string;
 };
